@@ -47,3 +47,18 @@
 - **Defense:**
   - `LEFT JOIN` forces the query planner to materialize all event rows and check for `NULL` in outer join buffers.
   - `NOT EXISTS` aborts the search for that customer as soon as the first `PURCHASE` event is found within the suppression window, minimizing memory usage and CPU cycles.
+
+---
+
+## 4. Database Portability & Benchmark Truthfulness
+
+### Q9: Which database engine did your benchmarks and tests run on?
+- **Defense:**
+  - **The benchmark and test suite ran on SQLite 3.45.3.**
+  - **Why:** To make the test suite and benchmark 100% reproducible on any developer machine or lightweight CI/CD pipeline without requiring external Docker daemon or PostgreSQL server installation.
+  - **The Benchmark:** Measured across 5,000 customers and 50,000 events (55,000 rows), demonstrating an identical algorithmic transition: full table scan (`SCAN c`, `SCAN e`) dropping from **194.91 ms** down to **9.21 ms** (a **21.16x speedup**) using a composite B-Tree index seek (`SEARCH e USING INDEX ix_events_customer_type_time`).
+  - **PostgreSQL Production Portability:** The schema is engineered to be dialect-agnostic using SQLAlchemy variants:
+    - 64-bit auto-incrementing primary keys: `BigIntID = BigInteger().with_variant(Integer, "sqlite")`.
+    - Semi-structured event payload: `JSON().with_variant(JSONB, "postgresql")`.
+    - Cross-dialect JSON traversal: `Event.event_payload["category"].as_string()` cleanly compiles to `->>` on PostgreSQL and `json_extract()` on SQLite.
+    - Switching to a live PostgreSQL production instance requires only updating `DATABASE_URL="postgresql+psycopg2://user:pass@host:5432/dbname"` in `.env`.

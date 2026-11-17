@@ -8,7 +8,7 @@
 
 ### Benchmark Environment
 - **Operating System:** Windows 11 (AMD64)
-- **Database Engine:** Relational Engine (SQLite 3.45.3 / PostgreSQL-compatible schema)
+- **Database Engine:** Embedded Relational Engine (SQLite 3.45.3) configured with PostgreSQL-compatible schema architecture (`BigIntID`, `JSONB` variant types, check constraints).
 - **ORM / Driver:** SQLAlchemy 2.0.36
 - **Dataset Size:** 5,000 customers, 50,000 behavioral events (55,000 total records)
 - **Benchmark Iterations:** 30 repetitions per scenario (excluding warmup)
@@ -21,7 +21,7 @@
 | **Without Indexes (Baseline)** | Full Table `SCAN` on `customers`, Full Table `SCAN` on `events` (Nested Loops) | **194.91 ms** | **221.96 ms** | 184.85 ms / 230.33 ms | Baseline |
 | **With Composite Indexes** | `SEARCH` on `customers` via `ix_customers_consent_city`, Index Seek on `events` via `ix_events_customer_type_time` | **9.21 ms** | **12.84 ms** | 8.34 ms / 13.00 ms | **21.16x FASTER** |
 
-### Execution Plan Comparison
+### Execution Plan Comparison (EXPLAIN QUERY PLAN)
 
 #### Baseline (Without Indexes):
 ```
@@ -49,6 +49,7 @@ USE TEMP B-TREE FOR ORDER BY
 - **Total Automated Tests:** 37 tests
 - **Passed Tests:** 37 (100% Pass Rate)
 - **Execution Time:** 3.55 seconds
+- **Database Engine Used for Test Suite:** SQLite (isolated file-based test runner with `NullPool` connections)
 - **Overall Code Coverage:** 95%
 - **Coverage Breakdown:**
   - `src/api/v1/campaigns.py`: 100%
@@ -71,7 +72,7 @@ USE TEMP B-TREE FOR ORDER BY
 ## 3. Verified Resume Bullet Points
 
 ### Bullet 1 (Audience Segmentation & Index Optimization):
-> *"Engineered a Customer Data & Audience Segmentation Engine in Python 3.12 and FastAPI, designing correlated `EXISTS` subqueries over 55,000 synthetic records with strict GDPR consent enforcement; optimized query execution by 21.16x (194.9ms &rarr; 9.2ms) via composite B-Tree indexes verified through EXPLAIN ANALYZE."*
+> *"Engineered a Customer Data & Audience Segmentation Engine in Python 3.12 and FastAPI, designing correlated `EXISTS` subqueries over 55,000 synthetic records with strict GDPR consent enforcement; optimized query execution by 21.16x (194.9ms &rarr; 9.2ms) via composite B-Tree indexes verified through relational EXPLAIN QUERY PLAN benchmarks with full PostgreSQL schema portability."*
 
 ### Bullet 2 (Transactional Integrity & Idempotency):
 > *"Architected an ACID-compliant campaign materialization workflow in SQLAlchemy 2.0 with atomic rollback on failure, paired with idempotent event ingestion using unique constraint keys and multi-threaded race condition protection."*
