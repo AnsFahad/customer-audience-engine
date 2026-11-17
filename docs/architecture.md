@@ -2,7 +2,7 @@
 
 ## 1. System Overview
 
-The **Customer Data & Audience Segmentation Engine** is a high-performance, modular Customer Data Platform (CDP) core service designed for enterprise marketing technology platforms like Zeta Global.
+The **Customer Data & Audience Segmentation Engine** is a high-performance, modular Customer Data Platform (CDP) core service designed for enterprise marketing technology platforms.
 
 It ingests customer profiles and behavioral interaction streams, evaluates multi-condition audience segmentation criteria across demographic and behavioral attributes, enforces strict consumer marketing consent (GDPR/CCPA/CAN-SPAM), and computes campaign-ready audience cohorts.
 

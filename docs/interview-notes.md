@@ -1,4 +1,4 @@
-# Technical Interview Notes & Defenses (Zeta Global Focus)
+# Technical Interview Notes & Defenses (CDP & Backend Systems Focus)
 
 ## 1. Architectural & Foundation Defenses
 

@@ -2,7 +2,7 @@
 
 A production-grade, modular backend service engineered for customer data ingestion, behavioral event tracking, dynamic rule-based audience segmentation, and transactional campaign materialization with strict marketing consent enforcement.
 
-Designed as an enterprise-grade Customer Data Platform (CDP) core component, inspired by architectures at marketing technology leaders such as Zeta Global.
+Designed as an enterprise-grade Customer Data Platform (CDP) core component, engineered for modern marketing technology platforms.
 
 ---
 
@@ -190,5 +190,5 @@ Campaign creation and audience materialization (`POST /api/v1/campaigns`) execut
 - [docs/architecture.md](file:///d:/Projects/customer-audience-engine/docs/architecture.md): Deep architectural specification and event flow.
 - [docs/database-design.md](file:///d:/Projects/customer-audience-engine/docs/database-design.md): 4-table relational schema, composite keys, and indexing strategy.
 - [docs/api-documentation.md](file:///d:/Projects/customer-audience-engine/docs/api-documentation.md): REST endpoint contracts with sample payloads.
-- [docs/interview-notes.md](file:///d:/Projects/customer-audience-engine/docs/interview-notes.md): Comprehensive interview defenses tailored for Zeta Global.
+- [docs/interview-notes.md](file:///d:/Projects/customer-audience-engine/docs/interview-notes.md): Comprehensive technical interview notes, trade-off defenses, and architectural design decisions.
 - [docs/resume-evidence.md](file:///d:/Projects/customer-audience-engine/docs/resume-evidence.md): **Zero fluff**. Verified test counts, benchmark figures, and empirical metrics.
