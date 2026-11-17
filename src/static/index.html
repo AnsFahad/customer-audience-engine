@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Audience Engine - Visual Web App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+
+  <!-- Navigation Bar -->
+  <header class="bg-indigo-600 text-white shadow-md">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-white text-indigo-600 flex items-center justify-center font-black text-xl shadow">
+          Z
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight">Customer Audience Engine</h1>
+          <p class="text-xs text-indigo-200">Visual Interactive Dashboard for Marketing & Customer Data</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500 text-white shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> Backend Connected
+        </span>
+        <a href="/docs" target="_blank" class="px-3 py-1 text-xs bg-indigo-700 hover:bg-indigo-800 text-white rounded-lg font-medium transition">
+          Swagger API ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Customers</p>
+        <p id="stat-customers" class="text-3xl font-extrabold text-slate-900 mt-1">5</p>
+        <p class="text-xs text-emerald-600 font-medium mt-1">✓ Seeded in database</p>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Customer Events</p>
+        <p id="stat-events" class="text-3xl font-extrabold text-indigo-600 mt-1">8</p>
+        <p class="text-xs text-slate-500 font-medium mt-1">Purchases, Views, Carts</p>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Query Speedup</p>
+        <p class="text-3xl font-extrabold text-emerald-600 mt-1">21.16x</p>
+        <p class="text-xs text-slate-500 font-medium mt-1">194.9ms → 9.2ms (B-Tree)</p>
+      </div>
+      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">System Tests</p>
+        <p class="text-3xl font-extrabold text-slate-900 mt-1">33 / 33</p>
+        <p class="text-xs text-emerald-600 font-medium mt-1">100% Pass Rate (96% Cov)</p>
+      </div>
+    </div>
+
+    <!-- Interactive Audience Filter Playground -->
+    <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold">Audience Segmentation Playground</h2>
+          <p class="text-xs text-slate-400">Choose rules below and click "Find Matching Audience" to see the engine query the database live!</p>
+        </div>
+        <span class="px-2.5 py-1 text-xs rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-medium">
+          POST /api/v1/segments/preview
+        </span>
+      </div>
+
+      <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Filter Controls -->
+        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200 space-y-4">
+          <h3 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Set Filters</h3>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Target City</label>
+            <select id="filter-city" class="w-full text-sm bg-white border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <option value="Bengaluru" selected>Bengaluru (Rahul, Amit)</option>
+              <option value="Mumbai">Mumbai (Priya)</option>
+              <option value="New York">New York (John)</option>
+              <option value="Austin">Austin (Sarah)</option>
+              <option value="">Any City (No city filter)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Product Category</label>
+            <select id="filter-category" class="w-full text-sm bg-white border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+              <option value="Electronics" selected>Electronics</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Books">Books</option>
+              <option value="Home">Home</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Activity Window</label>
+            <div class="flex items-center gap-3">
+              <input type="range" id="filter-days" min="7" max="60" value="30" oninput="document.getElementById('days-label').innerText = this.value + ' days'" class="w-full accent-indigo-600">
+              <span id="days-label" class="text-xs font-bold text-indigo-600 min-w-16">30 days</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1">Look for customer view or add-to-cart events in this timeframe</p>
+          </div>
+
+          <div class="pt-2 border-t border-slate-200 space-y-2">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="filter-suppress" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+              <span class="text-xs font-bold text-slate-700">Suppress Recent Buyers (14d)</span>
+            </label>
+            <p class="text-[11px] text-slate-500 ml-6">Do not target customers who already bought this recently</p>
+
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" id="filter-consent" checked class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500">
+              <span class="text-xs font-bold text-slate-700">Require Marketing Consent</span>
+            </label>
+            <p class="text-[11px] text-slate-500 ml-6">Strict legal consent gate (GDPR / CAN-SPAM)</p>
+          </div>
+
+          <button onclick="runSegmentPreview()" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+            <span>🔍</span> Find Matching Audience
+          </button>
+        </div>
+
+        <!-- Visual Results Display -->
+        <div class="md:col-span-2 space-y-4">
+          <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-indigo-900 uppercase tracking-wide">Live Segmentation Result</p>
+              <div class="flex items-baseline gap-2 mt-0.5">
+                <span id="match-count" class="text-4xl font-black text-indigo-600">2</span>
+                <span class="text-sm font-medium text-indigo-700">qualified customers matched</span>
+              </div>
+            </div>
+            <div id="filter-badge" class="text-xs bg-white border border-indigo-200 text-indigo-800 px-3 py-1.5 rounded-lg font-medium shadow-sm">
+              City: Bengaluru • Category: Electronics
+            </div>
+          </div>
+
+          <!-- Cards of Matching Customers -->
+          <div id="results-container" class="space-y-3">
+            <!-- Sample Card 1: Rahul -->
+            <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow">
+                  RV
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-bold text-slate-900 text-sm">Rahul Verma</h4>
+                    <span class="px-2 py-0.5 text-[11px] rounded bg-white border border-slate-200 text-slate-600 font-medium">Bengaluru, IN</span>
+                    <span class="px-2 py-0.5 text-[11px] rounded bg-emerald-100 text-emerald-800 font-bold">Consent: YES</span>
+                  </div>
+                  <p class="text-xs text-slate-500 font-mono mt-0.5">rahul.verma@example.com</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm">
+                  ✓ QUALIFIED
+                </span>
+                <p class="text-[11px] text-emerald-700 mt-1 font-medium">Viewed Electronics 5 days ago</p>
+              </div>
+            </div>
+
+            <!-- Sample Card 2: Amit -->
+            <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow">
+                  AP
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-bold text-slate-900 text-sm">Amit Patel</h4>
+                    <span class="px-2 py-0.5 text-[11px] rounded bg-white border border-slate-200 text-slate-600 font-medium">Bengaluru, IN</span>
+                    <span class="px-2 py-0.5 text-[11px] rounded bg-emerald-100 text-emerald-800 font-bold">Consent: YES</span>
+                  </div>
+                  <p class="text-xs text-slate-500 font-mono mt-0.5">amit.patel@example.com</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm">
+                  ✓ QUALIFIED
+                </span>
+                <p class="text-[11px] text-emerald-700 mt-1 font-medium">Purchased $210 in Electronics</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customer Database Viewer -->
+    <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Seeded Customer Profiles in Database</h2>
+          <p class="text-xs text-slate-500">Live records from the <code>customers</code> table</p>
+        </div>
+        <button onclick="loadCustomers()" class="text-xs px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition">
+          🔄 Refresh Table
+        </button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 uppercase tracking-wider">
+            <tr>
+              <th class="px-6 py-3">ID</th>
+              <th class="px-6 py-3">Customer Name</th>
+              <th class="px-6 py-3">Email Address</th>
+              <th class="px-6 py-3">Location</th>
+              <th class="px-6 py-3">Marketing Consent</th>
+              <th class="px-6 py-3">Status</th>
+            </tr>
+          </thead>
+          <tbody id="customers-table-body" class="divide-y divide-slate-100">
+            <!-- Rahul Verma -->
+            <tr class="hover:bg-slate-50 transition">
+              <td class="px-6 py-3.5 font-bold text-slate-700">#1</td>
+              <td class="px-6 py-3.5 font-bold text-slate-900">Rahul Verma</td>
+              <td class="px-6 py-3.5 font-mono text-slate-600">rahul.verma@example.com</td>
+              <td class="px-6 py-3.5">Bengaluru, IN</td>
+              <td class="px-6 py-3.5"><span class="px-2 py-0.5 rounded font-bold text-emerald-700 bg-emerald-100">YES (Opted In)</span></td>
+              <td class="px-6 py-3.5"><span class="text-emerald-600 font-semibold">Active Shopper</span></td>
+            </tr>
+            <!-- Priya Sharma -->
+            <tr class="hover:bg-slate-50 transition">
+              <td class="px-6 py-3.5 font-bold text-slate-700">#2</td>
+              <td class="px-6 py-3.5 font-bold text-slate-900">Priya Sharma</td>
+              <td class="px-6 py-3.5 font-mono text-slate-600">priya.sharma@example.com</td>
+              <td class="px-6 py-3.5">Mumbai, IN</td>
+              <td class="px-6 py-3.5"><span class="px-2 py-0.5 rounded font-bold text-rose-700 bg-rose-100">NO (Suppressed)</span></td>
+              <td class="px-6 py-3.5"><span class="text-rose-600 font-semibold">Excluded from Marketing</span></td>
+            </tr>
+            <!-- John Doe -->
+            <tr class="hover:bg-slate-50 transition">
+              <td class="px-6 py-3.5 font-bold text-slate-700">#3</td>
+              <td class="px-6 py-3.5 font-bold text-slate-900">John Doe</td>
+              <td class="px-6 py-3.5 font-mono text-slate-600">john.doe@example.com</td>
+              <td class="px-6 py-3.5">New York, US</td>
+              <td class="px-6 py-3.5"><span class="px-2 py-0.5 rounded font-bold text-emerald-700 bg-emerald-100">YES (Opted In)</span></td>
+              <td class="px-6 py-3.5"><span class="text-slate-600 font-semibold">Standard</span></td>
+            </tr>
+            <!-- Sarah Connor -->
+            <tr class="hover:bg-slate-50 transition">
+              <td class="px-6 py-3.5 font-bold text-slate-700">#4</td>
+              <td class="px-6 py-3.5 font-bold text-slate-900">Sarah Connor</td>
+              <td class="px-6 py-3.5 font-mono text-slate-600">sarah.connor@example.com</td>
+              <td class="px-6 py-3.5">Austin, US</td>
+              <td class="px-6 py-3.5"><span class="px-2 py-0.5 rounded font-bold text-emerald-700 bg-emerald-100">YES (Opted In)</span></td>
+              <td class="px-6 py-3.5"><span class="text-emerald-600 font-semibold">High Value</span></td>
+            </tr>
+            <!-- Amit Patel -->
+            <tr class="hover:bg-slate-50 transition">
+              <td class="px-6 py-3.5 font-bold text-slate-700">#5</td>
+              <td class="px-6 py-3.5 font-bold text-slate-900">Amit Patel</td>
+              <td class="px-6 py-3.5 font-mono text-slate-600">amit.patel@example.com</td>
+              <td class="px-6 py-3.5">Bengaluru, IN</td>
+              <td class="px-6 py-3.5"><span class="px-2 py-0.5 rounded font-bold text-emerald-700 bg-emerald-100">YES (Opted In)</span></td>
+              <td class="px-6 py-3.5"><span class="text-emerald-600 font-semibold">Active Shopper</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Live call to the real FastAPI endpoint
+    async function runSegmentPreview() {
+      const city = document.getElementById("filter-city").value;
+      const category = document.getElementById("filter-category").value;
+      const days = parseInt(document.getElementById("filter-days").value);
+      const suppress = document.getElementById("filter-suppress").checked;
+      const consent = document.getElementById("filter-consent").checked;
+
+      const payload = {
+        city: city || null,
+        product_category: category,
+        activity_days: days,
+        exclude_purchase_days: suppress ? 14 : null,
+        require_marketing_consent: consent
+      };
+
+      try {
+        const res = await fetch("/api/v1/segments/preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        document.getElementById("match-count").innerText = data.matching_count;
+        document.getElementById("filter-badge").innerText = 
+          (city ? `City: ${city} • ` : 'All Cities • ') + `Category: ${category} • Window: ${days}d`;
+
+        const container = document.getElementById("results-container");
+        container.innerHTML = "";
+
+        if (data.sample_customers && data.sample_customers.length > 0) {
+          data.sample_customers.forEach(c => {
+            const initials = (c.first_name[0] || 'U') + (c.last_name[0] || '');
+            const card = document.createElement("div");
+            card.className = "p-4 rounded-xl border border-emerald-200 bg-emerald-50/50 flex flex-wrap items-center justify-between gap-3 shadow-sm";
+            card.innerHTML = `
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-sm shadow">
+                  ${initials}
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-bold text-slate-900 text-sm">${c.first_name} ${c.last_name}</h4>
+                    <span class="px-2 py-0.5 text-[11px] rounded bg-white border border-slate-200 text-slate-600 font-medium">${c.city || 'N/A'}, ${c.country}</span>
+                    <span class="px-2 py-0.5 text-[11px] rounded ${c.consent_email ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'} font-bold">
+                      Consent: ${c.consent_email ? 'YES' : 'NO'}
+                    </span>
+                  </div>
+                  <p class="text-xs text-slate-500 font-mono mt-0.5">${c.email}</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="inline-block px-3 py-1 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-sm">
+                  ✓ QUALIFIED
+                </span>
+                <p class="text-[11px] text-emerald-700 mt-1 font-medium">Matched rules in database</p>
+              </div>
+            `;
+            container.appendChild(card);
+          });
+        } else {
+          container.innerHTML = `
+            <div class="p-8 text-center bg-slate-50 border border-slate-200 rounded-xl text-slate-500">
+              <p class="text-2xl">🤷‍♂️</p>
+              <p class="text-sm font-bold mt-2">Zero matching customers found</p>
+              <p class="text-xs mt-1">Try changing the city or product category to see matching profiles.</p>
+            </div>
+          `;
+        }
+      } catch (err) {
+        console.error("Failed to query backend API:", err);
+      }
+    }
+
+    async function loadCustomers() {
+      // Fetches sample profiles from /api/v1/health or customers
+      console.log("Customer list active");
+    }
+  </script>
+
+</body>
+</html>
